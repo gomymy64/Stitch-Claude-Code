@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Материалы к Уроку Stitch 2.0 + Claude Code | Мастодонт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800&family=Onest:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800&family=Onest:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #131313;
+    --bg3: #1a1a1a;
+    --text: #f5f5f5;
+    --text-muted: #888;
+    --text-dim: #555;
+    --border: #262626;
+    --border-bright: #383838;
+    --accent1: #C8FF00;
+    --accent2: #FF3D00;
+    --gradient: linear-gradient(135deg, #C8FF00 0%, #FF3D00 100%);
+    --gradient-soft: linear-gradient(135deg, rgba(200, 255, 0, 0.15) 0%, rgba(255, 61, 0, 0.15) 100%);
+    --gradient-line: linear-gradient(90deg, transparent 0%, #C8FF00 35%, #FF3D00 65%, transparent 100%);
+    --display: 'Unbounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --body: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Glow background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(200, 255, 0, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 80% 60%, rgba(255, 61, 0, 0.07) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 30% at 50% 90%, rgba(200, 255, 0, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Noise texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gradient); border-radius: 0; }
+
+  /* Selection */
+  ::selection { background: var(--accent1); color: var(--bg); }
+
+  /* Navigation */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  nav::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-line);
+  }
+
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 18px clamp(20px, 4vw, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .brand {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--gradient);
+    border-radius: 50%;
+    box-shadow: 0 0 16px rgba(200, 255, 0, 0.6);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+    border-color: var(--border-bright);
+    background: var(--bg2);
+  }
+
+  /* Container */
+  .container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 48px);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Hero */
+  .hero {
+    padding: clamp(60px, 12vw, 140px) 0 clamp(60px, 10vw, 100px);
+    position: relative;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--bg2);
+    border: 1px solid var(--border-bright);
+    color: var(--accent1);
+    margin-bottom: 28px;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent1);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent1);
+    animation: pulse-dot 2s ease infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 76px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
+    max-width: 1100px;
+  }
+
+  h1 .grad {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--text-muted);
+    max-width: 720px;
+    line-height: 1.6;
+    margin-bottom: 44px;
+  }
+
+  /* YouTube CTA button */
+  .yt-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--gradient);
+    color: var(--bg);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    padding: 18px 32px;
+    border-radius: 999px;
+    transition: all 0.25s;
+    box-shadow: 0 8px 32px rgba(200, 255, 0, 0.18);
+  }
+
+  .yt-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 14px 44px rgba(200, 255, 0, 0.35);
+  }
+
+  .yt-btn-icon {
+    width: 22px;
+    height: 22px;
+    fill: var(--bg);
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover {
+    background: var(--accent1);
+    color: var(--bg);
+    border-color: var(--accent1);
+  }
+
+  .copy-btn.copied {
+    background: var(--accent1);
+    color: var(--bg);
+    border-color: var(--accent1);
+  }
+
+  /* Sections */
+  section { padding: clamp(50px, 8vw, 90px) 0; }
+
+  .section-header {
+    margin-bottom: clamp(36px, 5vw, 60px);
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--accent2);
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+  }
+
+  /* What you'll learn */
+  .learn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .learn-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .learn-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient);
+  }
+
+  .learn-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-bright);
+  }
+
+  .learn-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-soft);
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .learn-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  /* Tools */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .tool-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+  }
+
+  .tool-card:hover {
+    border-color: var(--accent1);
+    background: var(--bg3);
+    transform: translateX(4px);
+  }
+
+  .tool-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent1);
+  }
+
+  .tool-body { flex: 1; min-width: 0; }
+
+  .tool-name {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+
+  .tool-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+
+  .tool-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(200, 255, 0, 0.12);
+    color: var(--accent1);
+    border: 1px solid rgba(200, 255, 0, 0.25);
+    white-space: nowrap;
+  }
+
+  .tool-pill.paid {
+    background: rgba(255, 61, 0, 0.1);
+    color: var(--accent2);
+    border-color: rgba(255, 61, 0, 0.25);
+  }
+
+  /* Step Cards */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .step {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: clamp(28px, 4vw, 44px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient);
+  }
+
+  .step::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255, 61, 0, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .step-num {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(48px, 6vw, 72px);
+    line-height: 1;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    margin-bottom: 8px;
+    letter-spacing: -0.04em;
+  }
+
+  .step-title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(22px, 3vw, 32px);
+    line-height: 1.15;
+    margin-bottom: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .step-desc {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 760px;
+    margin-bottom: 28px;
+  }
+
+  .actions {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 24px;
+  }
+
+  .actions-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+
+  .actions ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .actions li {
+    padding-left: 22px;
+    position: relative;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .actions li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent1);
+    font-size: 14px;
+  }
+
+  .actions li a {
+    color: var(--accent1);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(200, 255, 0, 0.3);
+    transition: all 0.2s;
+  }
+
+  .actions li a:hover {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+  }
+
+  /* Prompt block */
+  .prompt {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid transparent;
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    position: relative;
+    box-shadow: 0 0 0 1px transparent;
+    transition: box-shadow 0.3s;
+    background-clip: padding-box;
+  }
+
+  .prompt::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--gradient);
+    border-radius: 14px 0 0 14px;
+  }
+
+  .prompt:hover {
+    box-shadow: 0 0 40px rgba(200, 255, 0, 0.08);
+  }
+
+  .prompt-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .prompt-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .prompt-label .label-accent {
+    color: var(--accent1);
+  }
+
+  .prompt-text {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Hint/Settings */
+  .hint {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(200, 255, 0, 0.04);
+    border: 1px solid rgba(200, 255, 0, 0.15);
+    border-radius: 12px;
+    margin-top: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .hint-icon {
+    flex-shrink: 0;
+    color: var(--accent1);
+    font-size: 16px;
+  }
+
+  .hint b { color: var(--text); font-weight: 600; }
+
+  /* Links section */
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+  }
+
+  .link-card:hover {
+    border-color: var(--accent1);
+    transform: translateY(-2px);
+    background: var(--bg3);
+  }
+
+  .link-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    background: var(--gradient-soft);
+    color: var(--accent1);
+  }
+
+  .link-body { flex: 1; min-width: 0; }
+
+  .link-name {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .link-url {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* CTA Block - Intensive */
+  .cta-wrap { padding: clamp(40px, 6vw, 70px) 0; }
+
+  .cta {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: clamp(40px, 6vw, 70px) clamp(28px, 5vw, 70px);
+    position: relative;
+    overflow: hidden;
+    animation: cta-glow 3s ease-in-out infinite;
+  }
+
+  .cta::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(200, 255, 0, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cta::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 61, 0, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  @keyframes cta-glow {
+    0%, 100% { box-shadow: 0 0 60px rgba(200, 255, 0, 0.08), 0 0 120px rgba(255, 61, 0, 0.04); }
+    50% { box-shadow: 0 0 90px rgba(200, 255, 0, 0.15), 0 0 180px rgba(255, 61, 0, 0.08); }
+  }
+
+  .cta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    color: var(--accent2);
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent2);
+    animation: pulse-dot 2s ease infinite;
+  }
+
+  .cta-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(28px, 4.2vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+    max-width: 800px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-title .grad {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .cta-sub {
+    font-family: var(--mono);
+    font-size: clamp(13px, 1.4vw, 15px);
+    color: var(--text-muted);
+    margin-bottom: 36px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 48px;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-col h4 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent1);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cta-col h4::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent1);
+  }
+
+  .cta-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .cta-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .cta-list li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    background: var(--gradient);
+    border-radius: 50%;
+    margin-top: 8px;
+    box-shadow: 0 0 12px rgba(200, 255, 0, 0.4);
+  }
+
+  .cta-list li b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .cta-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-price {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(20px, 2.6vw, 28px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .cta-price .free {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .cta-price-sub {
+    display: block;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .cta-btn {
+    background: var(--gradient);
+    color: var(--bg);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    padding: 20px 44px;
+    border-radius: 999px;
+    transition: all 0.25s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 32px rgba(200, 255, 0, 0.18);
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 14px 44px rgba(200, 255, 0, 0.4);
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px 0 50px;
+    margin-top: 40px;
+    position: relative;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-line);
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+
+  .footer-tagline {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .footer-yt {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .footer-yt:hover {
+    background: var(--accent1);
+    color: var(--bg);
+    border-color: var(--accent1);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .cta { padding: 36px 24px; }
+    .cta-grid { grid-template-columns: 1fr; gap: 28px; }
+    .cta-footer { flex-direction: column; align-items: flex-start; }
+    .cta-btn { width: 100%; justify-content: center; }
+    .step::after { display: none; }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+    .prompt-head { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (min-width: 2000px) {
+    .container { max-width: 1400px; }
+  }
+
+  /* Print hidden */
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      Мастодонт
+    </div>
+    <ul class="nav-links">
+      <li><a href="#tools">Инструменты</a></li>
+      <li><a href="#steps">Шаги</a></li>
+      <li><a href="#links">Ссылки</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Материалы к Уроку
+    </div>
+    <h1>Stitch 2.0 + Claude Code: Сайт <span class="grad">с Авторизацией и Оплатой</span> за 30 минут</h1>
+    <p class="hero-sub">Всё что нужно повторить из видео - промпты, ссылки, инструменты, настройки. От референсов в Stitch до приёма платежей через Stripe.</p>
+
+    <a class="yt-btn" href="https://youtu.be/REPLACE_ME" target="_blank" rel="noopener" id="ytLink">
+      <svg class="yt-btn-icon" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      Смотреть видео на YouTube
+    </a>
+  </header>
+
+  <!-- What you'll learn -->
+  <section>
+    <div class="section-header">
+      <div class="section-label">01 / Результат</div>
+      <h2>Что ты научишься делать</h2>
+    </div>
+    <div class="learn-grid">
+      <div class="learn-card"><div class="learn-icon">🎨</div><div class="learn-text">Генерировать премиальный дизайн сайта в Google Stitch по референсам с Godly Website и Dribbble</div></div>
+      <div class="learn-card"><div class="learn-icon">⚡</div><div class="learn-text">Превращать статичный дизайн в живое React-приложение через Claude Code</div></div>
+      <div class="learn-card"><div class="learn-icon">🤖</div><div class="learn-text">Добавлять интерактивные 3D-компоненты с 21st.dev одним промптом</div></div>
+      <div class="learn-card"><div class="learn-icon">🔐</div><div class="learn-text">Подключать авторизацию через Supabase с email/паролем и Row Level Security</div></div>
+      <div class="learn-card"><div class="learn-icon">🚀</div><div class="learn-text">Деплоить на Vercel напрямую через токен, без GitHub</div></div>
+      <div class="learn-card"><div class="learn-icon">💳</div><div class="learn-text">Принимать платежи через Stripe - подписка $99/мес в один промпт</div></div>
+    </div>
+  </section>
+
+  <!-- Tools -->
+  <section id="tools">
+    <div class="section-header">
+      <div class="section-label">02 / Стек</div>
+      <h2>Что понадобится</h2>
+    </div>
+    <div class="tools-grid">
+      <a class="tool-card" href="https://stitch.withgoogle.com" target="_blank" rel="noopener">
+        <div class="tool-icon">S</div>
+        <div class="tool-body">
+          <div class="tool-name">Google Stitch</div>
+          <div class="tool-desc">stitch.withgoogle.com</div>
+        </div>
+        <div class="tool-pill">Бесплатно</div>
+      </a>
+      <a class="tool-card" href="https://claude.com/claude-code" target="_blank" rel="noopener">
+        <div class="tool-icon">C</div>
+        <div class="tool-body">
+          <div class="tool-name">Claude Code</div>
+          <div class="tool-desc">claude.com/claude-code</div>
+        </div>
+        <div class="tool-pill paid">Max план</div>
+      </a>
+      <a class="tool-card" href="https://godly.website" target="_blank" rel="noopener">
+        <div class="tool-icon">G</div>
+        <div class="tool-body">
+          <div class="tool-name">Godly Website</div>
+          <div class="tool-desc">Референсы дизайна</div>
+        </div>
+        <div class="tool-pill">Бесплатно</div>
+      </a>
+      <a class="tool-card" href="https://dribbble.com" target="_blank" rel="noopener">
+        <div class="tool-icon">D</div>
+        <div class="tool-body">
+          <div class="tool-name">Dribbble</div>
+          <div class="tool-desc">Концепты и референсы</div>
+        </div>
+        <div class="tool-pill">Бесплатно</div>
+      </a>
+      <a class="tool-card" href="https://21st.dev" target="_blank" rel="noopener">
+        <div class="tool-icon">21</div>
+        <div class="tool-body">
+          <div class="tool-name">21st.dev</div>
+          <div class="tool-desc">3D и анимированные компоненты</div>
+        </div>
+        <div class="tool-pill">Бесплатно</div>
+      </a>
+      <a class="tool-card" href="https://supabase.com" target="_blank" rel="noopener">
+        <div class="tool-icon">SB</div>
+        <div class="tool-body">
+          <div class="tool-name">Supabase</div>
+          <div class="tool-desc">База данных и авторизация</div>
+        </div>
+        <div class="tool-pill">Free tier</div>
+      </a>
+      <a class="tool-card" href="https://vercel.com" target="_blank" rel="noopener">
+        <div class="tool-icon">V</div>
+        <div class="tool-body">
+          <div class="tool-name">Vercel</div>
+          <div class="tool-desc">Деплой проекта</div>
+        </div>
+        <div class="tool-pill">Free tier</div>
+      </a>
+      <a class="tool-card" href="https://stripe.com" target="_blank" rel="noopener">
+        <div class="tool-icon">$</div>
+        <div class="tool-body">
+          <div class="tool-name">Stripe</div>
+          <div class="tool-desc">Приём платежей (sandbox)</div>
+        </div>
+        <div class="tool-pill paid">Комиссия</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Steps -->
+  <section id="steps">
+    <div class="section-header">
+      <div class="section-label">03 / Процесс</div>
+      <h2>Пошаговая инструкция</h2>
+    </div>
+
+    <div class="steps-list">
+
+      <!-- Step 1 -->
+      <article class="step">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Дизайн в Google Stitch по референсам</h3>
+        <p class="step-desc">Заходим на stitch.withgoogle.com, регистрируем аккаунт. Создаём проект, выбираем веб-интерфейс (16:9). Перед промптом собираем референсы с Godly Website и Dribbble - 3-4 скриншота в стиле Apple/Tesla. Прикрепляем картинки в окно и выбираем режим Redesign.</p>
+        <div class="actions">
+          <div class="actions-label">Что делаем</div>
+          <ul>
+            <li>Создай аккаунт в <a href="https://stitch.withgoogle.com" target="_blank">Google Stitch</a></li>
+            <li>Зайди на <a href="https://godly.website" target="_blank">Godly Website</a> и <a href="https://dribbble.com" target="_blank">Dribbble</a>, скачай 3-4 референса в нужном стиле</li>
+            <li>В Stitch выбери веб-интерфейс (16:9)</li>
+            <li>Прикрепи референсы и выбери режим Redesign</li>
+          </ul>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 1</span> - генерация по картинкам</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p1')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p1">Привет, хочу сайт для компании Mastodont - производство гитар. Полностью автономная компания, где роботы-гуманоиды всё делают и управляют. Используй референсы как вдохновение: минимализм, гигантская типография. Возьми шрифт с первого референса - большой, смелый, жирный, качественный. Робота возьми с третьего референса.</div>
+        </div>
+        <div class="hint"><span class="hint-icon">⚙️</span><div><b>Альтернатива:</b> Stitch может работать по URL чужого сайта (например, gibson.com) в режиме Gemini 3.1 Pro Syncing. Картиночные референсы дают результат чище.</div></div>
+      </article>
+
+      <!-- Step 2 -->
+      <article class="step">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Доработка дизайна и настройка палитры</h3>
+        <p class="step-desc">Из набросков выбираем 2-3 лучших варианта (через Ctrl). Просим Stitch собрать финальную страницу. Дальше в правой панели крутим систему дизайна - основной/дополнительный цвет, шрифты. Один клик - палитра разлетается по всему сайту.</p>
+        <div class="actions">
+          <div class="actions-label">Что делаем</div>
+          <ul>
+            <li>Через Ctrl выдели 2-3 лучших варианта</li>
+            <li>В правой панели открой Design System</li>
+            <li>Поменяй Primary (фон), Secondary (акцент) - например на токсичный лайм в стиле Apple/Tesla</li>
+            <li>Главные страницы располагай вверху рабочей области, второстепенные внизу</li>
+          </ul>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 2</span> - финальная сборка страницы</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p2')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p2">Хорошо, идём дальше. Возьми этот текущий визуал как референс - типография, матовый стиль. Сохрани это и доработай весь сайт. Сделай полную страницу: секция «Автономное производство» с цифрами, большой фуллскрин-блок с роботом-сборщиком, блок подписки на закрытый клуб коллекционеров. Все гитары - матово-чёрные.</div>
+        </div>
+        <div class="hint"><span class="hint-icon">💡</span><div>Можно говорить голосом - кнопка микрофона в интерфейсе. Stitch понимает правки на лету.</div></div>
+      </article>
+
+      <!-- Step 3 -->
+      <article class="step">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Экспорт в Claude Code</h3>
+        <p class="step-desc">Выделяем нужные файлы в Stitch, жмём Export → ZIP. Распаковываем папку. Открываем Claude Code и подключаем папку как рабочую (выбор папки).</p>
+        <div class="actions">
+          <div class="actions-label">Что делаем</div>
+          <ul>
+            <li>В Stitch выдели финальный визуал → Export → ZIP</li>
+            <li>Распакуй архив</li>
+            <li>В <a href="https://claude.com/claude-code" target="_blank">Claude Code</a> подключи папку проекта</li>
+          </ul>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 3</span> - конвертация в живое приложение</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p3')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p3">Я создал дизайн в Stitch. Все файлы у тебя, бро. Получится превратить это в красивое приложение, используя любые библиотеки, которые посчитаешь нужным? Используй уникальную типографию с поддержкой кириллицы. Stitch выдал статику HTML/CSS - перепиши в динамичное React-приложение с анимациями.</div>
+        </div>
+      </article>
+
+      <!-- Step 4 -->
+      <article class="step">
+        <div class="step-num">04</div>
+        <h3 class="step-title">Форма регистрации и 3D-компонент с 21st.dev</h3>
+        <p class="step-desc">После первого драфта на localhost добавляем форму регистрации в подвал и заменяем статичную картинку на интерактивный 3D Spline-компонент с 21st.dev.</p>
+        <div class="actions">
+          <div class="actions-label">Что делаем</div>
+          <ul>
+            <li>Открой localhost и проверь первый билд</li>
+            <li>Перейди на компонент: <a href="https://21st.dev/community/components/serafim/splite/default" target="_blank">21st.dev/community/components/serafim/splite</a></li>
+            <li>На странице компонента нажми «Copy prompt» и «Copy link»</li>
+          </ul>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 4</span> - форма регистрации</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p4')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p4">Дизайн классный, но в самом низу страницы размести форму регистрации, которую мы потом привяжем к базе данных.</div>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 5</span> - 3D Spline-компонент</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p5')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p5">Добавим интерактивного 3D-робота в hero вместо текущей статичной картинки. Вот компонент: https://21st.dev/community/components/serafim/splite/default
+
+[ВСТАВЬ СЮДА PROMPT, который скопировал с 21st.dev]
+
+Замени статичного робота на интерактивный Spline scene. Сохрани композицию, размеры и позицию справа - по красоте.</div>
+        </div>
+      </article>
+
+      <!-- Step 5 -->
+      <article class="step">
+        <div class="step-num">05</div>
+        <h3 class="step-title">Подключаем Supabase (авторизация + база)</h3>
+        <p class="step-desc">Создаём аккаунт на supabase.com и проект. Дальше говорим Claude Code подключить Supabase MCP - он сам опросит про токен, project ref и всё остальное, что нужно. После этого создаст таблицу profiles, настроит Row Level Security и подключит регистрацию.</p>
+        <div class="actions">
+          <div class="actions-label">Что делаем</div>
+          <ul>
+            <li>Создай аккаунт на <a href="https://supabase.com" target="_blank">supabase.com</a> и новый проект</li>
+            <li>В Claude Code вставь промпт ниже - Клод сам опросит, что ему нужно</li>
+            <li>Когда попросит токен: Supabase → Account → Access Tokens → Generate new token (длительность 1-7 дней)</li>
+          </ul>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 6</span> - установка Supabase MCP</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p6')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p6">Подключи Supabase MCP к этому проекту через Claude Code. Опроси меня по очереди обо всём что нужно: токен, project ref, ключи. Скажи где их взять, я добавлю. Когда MCP заработает - проверь подключение через list_tables.</div>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 7</span> - интеграция Supabase в сайт</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p7')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p7">Теперь интегрируй Supabase в сайт. Пользователи должны регистрироваться: email, имя, пароль. Всё сохраняй в Supabase с включённым Row Level Security. Добавь форму регистрации и входа: кнопка «Войти», окошко с полями, после логина - личный кабинет с приветствием по имени. Создай таблицу profiles если её ещё нет.</div>
+        </div>
+      </article>
+
+      <!-- Step 6 -->
+      <article class="step">
+        <div class="step-num">06</div>
+        <h3 class="step-title">Деплой на Vercel через токен</h3>
+        <p class="step-desc">На vercel.com заходим в Account → Tokens, создаём токен. Передаём в Claude - он сам поставит Vercel CLI, залогинится, прокинет env-переменные (Supabase URL и ключи) и задеплоит. Минуя GitHub - быстрее.</p>
+        <div class="actions">
+          <div class="actions-label">Что делаем</div>
+          <ul>
+            <li>Зарегистрируйся на <a href="https://vercel.com" target="_blank">vercel.com</a></li>
+            <li>Account Settings → Tokens → Create</li>
+            <li>Скопируй токен и вставь в Claude Code</li>
+          </ul>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 8</span> - деплой на Vercel</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p8')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p8">Задеплой проект на Vercel напрямую через Vercel CLI, без GitHub. Используй мой токен: [ВСТАВЬ ТОКЕН]. Установи Vercel CLI если не установлен. Залогинься через токен, пропиши env-переменные (Supabase URL + Anon Key + Service Role Key), запусти продакшн-деплой, верни мне публичную URL.</div>
+        </div>
+        <div class="hint"><span class="hint-icon">💡</span><div>Для клиентов из РФ потом переноси на бегет или любой российский хостинг. Для теста Vercel идеален.</div></div>
+      </article>
+
+      <!-- Step 7 -->
+      <article class="step">
+        <div class="step-num">07</div>
+        <h3 class="step-title">Подключаем приём платежей через Stripe</h3>
+        <p class="step-desc">В Stripe sandbox (обязательно sandbox, не боевые ключи!) создаём продукт. Получаем ключи. Открываем НОВУЮ сессию в Claude Code - свежий контекст работает точнее на сложных задачах.</p>
+        <div class="actions">
+          <div class="actions-label">Что делаем</div>
+          <ul>
+            <li>В <a href="https://stripe.com" target="_blank">Stripe</a> переключись в Sandbox mode (важно!)</li>
+            <li>Products → Create product: «Закрытый клуб коллекционеров», $99/мес, recurring</li>
+            <li>Добавь картинку (одну из гитар из Stitch) - повышает конверсию</li>
+            <li>Developers → API Keys → скопируй Secret Key + Publishable Key</li>
+            <li>В Claude Code открой НОВУЮ сессию</li>
+          </ul>
+        </div>
+        <div class="prompt">
+          <div class="prompt-head">
+            <div class="prompt-label"><span class="label-accent">💬 Промпт 9</span> - интеграция Stripe</div>
+            <button class="copy-btn" onclick="copyPrompt(this, 'p9')">📋 Скопировать</button>
+          </div>
+          <div class="prompt-text" id="p9">Интегрируем Stripe в личный кабинет. Когда залогиненный пользователь нажимает «Оформить подписку» - он переходит на Stripe Checkout и платит $99/мес за закрытый клуб коллекционеров. В Stripe Sandbox у меня уже создан продукт. Скажи, что тебе нужно от меня - токены, ключи, всё что угодно. После оплаты в дашборде должен показываться статус «Pro» и доступ к закрытому контенту.</div>
+        </div>
+        <div class="hint"><span class="hint-icon">🔧</span><div>Если после оплаты статус «Pro» не подтянулся - просто скажи Клоду: <b>«оплата прошла, но статус не обновился, почини»</b>. Он сам найдёт где webhook отвалился и пропишет.</div></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- All links -->
+  <section id="links">
+    <div class="section-header">
+      <div class="section-label">04 / Стек ссылок</div>
+      <h2>Все ссылки</h2>
+    </div>
+    <div class="links-grid">
+      <a class="link-card" href="https://stitch.withgoogle.com" target="_blank" rel="noopener">
+        <div class="link-icon">S</div>
+        <div class="link-body"><div class="link-name">Google Stitch</div><div class="link-url">stitch.withgoogle.com</div></div>
+      </a>
+      <a class="link-card" href="https://claude.com/claude-code" target="_blank" rel="noopener">
+        <div class="link-icon">C</div>
+        <div class="link-body"><div class="link-name">Claude Code</div><div class="link-url">claude.com/claude-code</div></div>
+      </a>
+      <a class="link-card" href="https://godly.website" target="_blank" rel="noopener">
+        <div class="link-icon">G</div>
+        <div class="link-body"><div class="link-name">Godly Website</div><div class="link-url">godly.website</div></div>
+      </a>
+      <a class="link-card" href="https://dribbble.com" target="_blank" rel="noopener">
+        <div class="link-icon">D</div>
+        <div class="link-body"><div class="link-name">Dribbble</div><div class="link-url">dribbble.com</div></div>
+      </a>
+      <a class="link-card" href="https://21st.dev" target="_blank" rel="noopener">
+        <div class="link-icon">21</div>
+        <div class="link-body"><div class="link-name">21st.dev</div><div class="link-url">21st.dev</div></div>
+      </a>
+      <a class="link-card" href="https://21st.dev/community/components/serafim/splite/default" target="_blank" rel="noopener">
+        <div class="link-icon">🤖</div>
+        <div class="link-body"><div class="link-name">3D Spline компонент</div><div class="link-url">тот самый робот из видео</div></div>
+      </a>
+      <a class="link-card" href="https://supabase.com" target="_blank" rel="noopener">
+        <div class="link-icon">SB</div>
+        <div class="link-body"><div class="link-name">Supabase</div><div class="link-url">supabase.com</div></div>
+      </a>
+      <a class="link-card" href="https://vercel.com" target="_blank" rel="noopener">
+        <div class="link-icon">V</div>
+        <div class="link-body"><div class="link-name">Vercel</div><div class="link-url">vercel.com</div></div>
+      </a>
+      <a class="link-card" href="https://stripe.com" target="_blank" rel="noopener">
+        <div class="link-icon">$</div>
+        <div class="link-body"><div class="link-name">Stripe</div><div class="link-url">stripe.com</div></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <div class="cta">
+      <div class="cta-badge">
+        <span class="cta-badge-dot"></span>
+        Бесплатный интенсив
+      </div>
+      <h2 class="cta-title">Первые <span class="grad">$1200 на ИИ</span> - бесплатный интенсив</h2>
+      <div class="cta-sub">Внутри - реальные инструменты, демо и кейсы</div>
+
+      <div class="cta-grid">
+        <div class="cta-col">
+          <h4>Что внутри</h4>
+          <ul class="cta-list">
+            <li>Реальный демо AntiGravity вживую</li>
+            <li>Софт, который за 5 минут находит компании без сайтов с готовыми контактами</li>
+            <li>Кейсы учеников: <b>$1650 за 3 проекта</b> без команды</li>
+          </ul>
+        </div>
+        <div class="cta-col">
+          <h4>Два бонуса в конце</h4>
+          <ul class="cta-list">
+            <li>50 скучных и самых прибыльных ниш без конкуренции</li>
+            <li>Чек-лист: первые <b>$500 за 7 дней</b></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta-footer">
+        <div class="cta-price">
+          <span class="free">Бесплатно.</span> Навсегда.
+          <span class="cta-price-sub">Без оплат и подписок</span>
+        </div>
+        <a class="cta-btn" href="https://t.me/IntensivMastaBot" target="_blank" rel="noopener">
+          Забрать интенсив →
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">МАСТОДОНТ</div>
+        <div class="footer-tagline">AI и нейросети - просто, по делу</div>
+      </div>
+      <a class="footer-yt" href="https://youtu.be/REPLACE_ME" target="_blank" rel="noopener">
+        Смотреть на YouTube →
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '✓ Скопировано!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = original;
+      }, 2000);
+    });
+  }
+
+  function copyPrompt(btn, id) {
+    const text = document.getElementById(id).textContent;
+    copyText(btn, text);
+  }
+</script>
+
+</body>
+</html>

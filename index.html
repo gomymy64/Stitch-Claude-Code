@@ -1009,6 +1009,7 @@
     white-space: nowrap; border: 0;
   }
 </style>
+<style>.cta-hit{position:absolute;inset:0;z-index:5;display:block}</style>
 </head>
 <body>
 
@@ -1372,7 +1373,7 @@
   </section>
 
   <!-- CTA -->
-  <div class="cta-wrap">
+  <div class="cta-wrap" style="position:relative"><a class="cta-hit" href="https://t.me/mastodont_aibot?start=mini_kurs" target="_blank" rel="noopener" aria-label="Забрать интенсив"></a>
     <div class="cta">
       <div class="cta-badge">
         <span class="cta-badge-dot"></span>
@@ -1448,21 +1449,5 @@
 </script>
 
 
-<script>
-/* clickable-cta: вся карточка интенсива кликабельна */
-(function(){
-  var sels = '.cta, .cta-wrap, .cta-card, .ctabox, .intensiv-card, .cta-section';
-  document.querySelectorAll(sels).forEach(function(box){
-    if (box.tagName === 'A') return;
-    var link = box.querySelector('a[href*="mastodont_aibot"]');
-    if (!link) return;
-    box.style.cursor = 'pointer';
-    box.addEventListener('click', function(e){
-      if (e.target.closest('a')) return;
-      window.open(link.href, '_blank', 'noopener');
-    });
-  });
-})();
-</script>
 </body>
 </html>
